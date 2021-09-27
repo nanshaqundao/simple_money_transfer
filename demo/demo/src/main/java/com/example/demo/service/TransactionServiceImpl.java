@@ -19,13 +19,14 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.List;
 import java.util.Objects;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 
 @Component
 public class TransactionServiceImpl implements TransactionService {
-
+    private static final Logger logger = LoggerFactory.getLogger(TransactionServiceImpl.class);
 
     @Autowired
     private UserService userService;
@@ -40,24 +41,31 @@ public class TransactionServiceImpl implements TransactionService {
         User sourceUser = userService.selectByUserName(sourceAccount);
         if (!Objects.equals(sourceUser.getToken(), token)) {
             // Authentication failed
+            logger.error("Authentication Failed");
             throw new Exception("Authentication Failed");
         }
 
         if (amount > sourceUser.getBalance()) {
             // not enough blance on the sending account
+            logger.error("Not enough balance");
             throw new Exception("Not enough balance");
         }
 
         User targetUser = userService.selectByUserName(targetAccount);
         if (targetUser.equals(null)) {
             // target account not existing
+            logger.error("target account not existing");
             throw new Exception("target account not existing");
         }
+
+        logger.info("--------Starting Transaction-------");
         Double sourceOldAmount = sourceUser.getBalance();
         Double targetOldAmount = targetUser.getBalance();
         int update1 = userService.updateBalance(sourceAccount, sourceOldAmount - amount);
         int update2 = userService.updateBalance(targetAccount, targetOldAmount + amount);
 
+        logger.info("Sending from:" + sourceUser.getUserName() + " to " + targetUser.getUserName());
+        logger.info("Transaction Amount is: " + amount);
         Timestamp timestamp = Timestamp.valueOf(LocalDateTime.now(ZoneId.of("UTC")));
 
         TransactionRecord transactionRecord = new TransactionRecord();
@@ -70,8 +78,11 @@ public class TransactionServiceImpl implements TransactionService {
         transactionRecord.setTransactionType(TransactionType.Debit);
         int update3 = insertTransaction(transactionRecord);
         if (update3 != 1) {
+            logger.error("Transaction Update Failed");
             throw new Exception("Transaction Update Failed");
         }
+
+        logger.info("--------Finishing Transaction-------");
         return transactionRecord;
     }
 
