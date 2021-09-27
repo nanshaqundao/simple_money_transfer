@@ -28,3 +28,9 @@ A simple demo of money transfer between account
  ```
  This is to transfer from Jack to Tom, an 100.00 amount of money using Jack's token
  ```
+## H2 Database
+### Connection
+ - web console URL: http://localhost:8080/h2-console/
+ - JDBC URL: jdbc:h2:mem:testdb
+### Explanation
+ - There are two tables, one for Account the other is for transaction records
