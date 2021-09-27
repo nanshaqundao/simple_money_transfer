@@ -28,6 +28,7 @@ A simple demo of money transfer between account
  ```
  This is to transfer from Jack to Tom, an 100.00 amount of money using Jack's token
  ```
+ Check the ![alt text](postman_demo.png "Title")
 ## H2 Database
 ### Connection
  - web console URL: http://localhost:8080/h2-console/
