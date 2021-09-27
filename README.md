@@ -4,12 +4,15 @@ A simple demo of money transfer between account
 
 ## Usage
 
-Run the Jar file
+ - Perform maven package to build the jar file.
+ - Run the Jar file
+
 
 ## Explanation
 
-It is using JDK11 to compile and build.
-It is using the simple H2 in memory database for the demo
+ - It is using JDK11 to compile and build.
+ - It is using the simple H2 in memory database for the demo
+ - The pre-load data are three user accounts "Jack", "Richard" and "Tom"
 
 ## API
 
