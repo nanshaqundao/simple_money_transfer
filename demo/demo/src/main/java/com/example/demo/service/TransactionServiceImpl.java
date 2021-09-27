@@ -5,21 +5,28 @@ import com.example.demo.model.TransactionType;
 import com.example.demo.model.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.servlet.http.HttpServletRequest;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.sql.Timestamp;
-import java.time.Clock;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.util.List;
 import java.util.Objects;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 
 @Component
 public class TransactionServiceImpl implements TransactionService {
+
+
     @Autowired
     private UserService userService;
 
@@ -37,11 +44,13 @@ public class TransactionServiceImpl implements TransactionService {
         }
 
         if (amount > sourceUser.getBalance()) {
+            // not enough blance on the sending account
             throw new Exception("Not enough balance");
         }
 
         User targetUser = userService.selectByUserName(targetAccount);
         if (targetUser.equals(null)) {
+            // target account not existing
             throw new Exception("target account not existing");
         }
         Double sourceOldAmount = sourceUser.getBalance();
@@ -83,6 +92,29 @@ public class TransactionServiceImpl implements TransactionService {
             return ps;
         }, keyHolder);
         return result;
+    }
+
+    @Override
+    public List<TransactionRecord> listAllTransactionRecords() {
+        return jdbcTemplate.query("select * from TRANSACTION_RECORD", getRowMapper());
+    }
+
+    private RowMapper<TransactionRecord> getRowMapper() {
+        return new RowMapper<TransactionRecord>() {
+            @Override
+            public TransactionRecord mapRow(ResultSet rs, int rowNum) throws SQLException {
+                TransactionRecord transactionRecord = new TransactionRecord();
+                transactionRecord.setId(rs.getInt("ID"));
+                transactionRecord.setUserName(rs.getString("USERNAME"));
+                transactionRecord.setTransactionTime(rs.getTimestamp("TRANSACTION_TIME"));
+                transactionRecord.setOldBalance(rs.getDouble("OLD_BALANCE"));
+                transactionRecord.setTransactionAmount(rs.getDouble("TRANSACTION_AMOUNT"));
+                transactionRecord.setNewBalance(rs.getDouble("NEW_BALANCE"));
+                transactionRecord.setTargetAccount(rs.getString("TARGET_ACCOUNT"));
+                transactionRecord.setTransactionType(rs.getString("TRANSACTION_TYPE"));
+                return transactionRecord;
+            }
+        };
     }
 
 
