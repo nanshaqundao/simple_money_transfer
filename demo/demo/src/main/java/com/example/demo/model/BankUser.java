@@ -1,6 +1,6 @@
 package com.example.demo.model;
 
-public class User {
+public class BankUser {
     int id ;
     String userName ;
     String password ;

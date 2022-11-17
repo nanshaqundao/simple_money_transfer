@@ -1,6 +1,6 @@
 package com.example.demo.controller;
 
-import com.example.demo.model.User;
+import com.example.demo.model.BankUser;
 import com.example.demo.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -10,19 +10,19 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 
 @RestController
-public class UserController {
+public class BankUserController {
 
 
     @Autowired
     private UserService userService;
 
     @GetMapping("/selectByUserName")
-    public User selectByUserName(@RequestParam("userName") String username) {
+    public BankUser selectByUserName(@RequestParam("userName") String username) {
         return userService.selectByUserName(username);
     }
 
     @GetMapping("/listAllUsers")
-    public List<User> listAllUsers() {
+    public List<BankUser> listAllUsers() {
         return userService.listAllUsers();
     }
 }

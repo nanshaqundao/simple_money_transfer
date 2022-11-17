@@ -1,8 +1,8 @@
 package com.example.demo.service;
 
+import com.example.demo.model.BankUser;
 import com.example.demo.model.TransactionRecord;
 import com.example.demo.model.TransactionType;
-import com.example.demo.model.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
@@ -38,33 +38,33 @@ public class TransactionServiceImpl implements TransactionService {
     @Transactional
     public TransactionRecord transferMoney(String sourceAccount, Double amount, String targetAccount, String token) throws Exception {
 
-        User sourceUser = userService.selectByUserName(sourceAccount);
-        if (!Objects.equals(sourceUser.getToken(), token)) {
+        BankUser sourceBankUser = userService.selectByUserName(sourceAccount);
+        if (!Objects.equals(sourceBankUser.getToken(), token)) {
             // Authentication failed
             logger.error("Authentication Failed");
             throw new Exception("Authentication Failed");
         }
 
-        if (amount > sourceUser.getBalance()) {
+        if (amount > sourceBankUser.getBalance()) {
             // not enough blance on the sending account
             logger.error("Not enough balance");
             throw new Exception("Not enough balance");
         }
 
-        User targetUser = userService.selectByUserName(targetAccount);
-        if (targetUser.equals(null)) {
+        BankUser targetBankUser = userService.selectByUserName(targetAccount);
+        if (targetBankUser.equals(null)) {
             // target account not existing
             logger.error("target account not existing");
             throw new Exception("target account not existing");
         }
 
         logger.info("--------Starting Transaction-------");
-        Double sourceOldAmount = sourceUser.getBalance();
-        Double targetOldAmount = targetUser.getBalance();
+        Double sourceOldAmount = sourceBankUser.getBalance();
+        Double targetOldAmount = targetBankUser.getBalance();
         int update1 = userService.updateBalance(sourceAccount, sourceOldAmount - amount);
         int update2 = userService.updateBalance(targetAccount, targetOldAmount + amount);
 
-        logger.info("Sending from:" + sourceUser.getUserName() + " to " + targetUser.getUserName());
+        logger.info("Sending from:" + sourceBankUser.getUserName() + " to " + targetBankUser.getUserName());
         logger.info("Transaction Amount is: " + amount);
         Timestamp timestamp = Timestamp.valueOf(LocalDateTime.now(ZoneId.of("UTC")));
 

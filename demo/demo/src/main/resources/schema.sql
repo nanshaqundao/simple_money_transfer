@@ -1,7 +1,6 @@
-drop table USER if exists;
-drop table TRANSACTION_RECORD if exists;
 
-CREATE TABLE USER
+
+CREATE TABLE if not exists BANK_USER
 (
     `id`       bigint NOT NULL comment 'ID ',
     `username` varchar(50) comment 'USER_NAME',
@@ -11,7 +10,7 @@ CREATE TABLE USER
     PRIMARY KEY (`id`)
 );
 
-CREATE TABLE TRANSACTION_RECORD
+CREATE TABLE if not exists TRANSACTION_RECORD
 (
     `id`                 int NOT NULL AUTO_INCREMENT,
     `username`           varchar(50) default null,

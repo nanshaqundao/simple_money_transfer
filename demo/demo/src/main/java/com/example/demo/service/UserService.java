@@ -1,13 +1,13 @@
 package com.example.demo.service;
 
-import com.example.demo.model.User;
+import com.example.demo.model.BankUser;
 
 import java.util.List;
 
 public interface UserService {
-    public User selectByUserName(String username);
+    public BankUser selectByUserName(String username);
 
-    public List<User> listAllUsers();
+    public List<BankUser> listAllUsers();
 
     public int updateBalance(String username, Double newBalance);
 }
